@@ -5,7 +5,7 @@
 @section('content')
 <div class="page active" id="page-dashboard">
   <div class="page-header">
-    <div class="page-title">📊 Dashboard</div>
+    <div class="page-title">Dashboard</div>
     <div class="page-sub">{{ now()->translatedFormat('l, d F Y') }}</div>
   </div>
 

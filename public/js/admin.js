@@ -12,21 +12,38 @@ let pendingQrisImage = null;
 // ==========================================
 async function apiPost(url, data) {
   try {
+    const isFormData = data instanceof FormData;
+    if (isFormData && window.CSRF_TOKEN) {
+      data.append('_token', window.CSRF_TOKEN);
+    }
+
     const r = await fetch(url, {
       method: 'POST',
       headers: {
-        ...(data instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
-        'X-CSRF-TOKEN': window.CSRF_TOKEN,
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+        'X-CSRF-TOKEN': window.CSRF_TOKEN || '',
         'Accept': 'application/json',
       },
-      body: data instanceof FormData ? data : JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
     });
-    const json = await r.json().catch(() => null);
+
+    const rawText = await r.text();
+    let json = null;
+    if (rawText) {
+      try {
+        json = JSON.parse(rawText);
+      } catch {
+        json = null;
+      }
+    }
+
     if (!r.ok) {
       const validationError = json?.errors ? Object.values(json.errors).flat()[0] : null;
-      return { success: false, error: json?.error || validationError || json?.message || `Server merespon status ${r.status}` };
+      const fallbackText = rawText && rawText.length < 500 ? rawText.replace(/<[^>]+>/g, '').trim() : null;
+      return { success: false, error: json?.error || validationError || json?.message || fallbackText || `Server merespon status ${r.status}` };
     }
-    return json;
+
+    return json ?? { success: true };
   } catch (err) {
     return { success: false, error: 'Tidak bisa menghubungi server: ' + err.message };
   }
@@ -444,6 +461,7 @@ async function saveMenu() {
   if (!name || !price) { showToast('⚠️ Nama dan harga wajib diisi!'); return; }
 
   const formData = new FormData();
+  formData.append('_token', window.CSRF_TOKEN || '');
   formData.append('id', editingMenuId || '');
   formData.append('category_id', catId);
   formData.append('name', name);
@@ -452,7 +470,17 @@ async function saveMenu() {
   formData.append('is_available', avail ? '1' : '0');
   if (stock !== null) formData.append('stock', stock);
   const image = document.getElementById('m-image').files[0];
-  if (image) formData.append('image', image);
+  if (image) {
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(image.type)) {
+      showToast('❌ Format gambar harus JPG, PNG, atau WEBP');
+      return;
+    }
+    if (image.size > 10 * 1024 * 1024) {
+      showToast('❌ Ukuran gambar maksimal 10 MB');
+      return;
+    }
+    formData.append('image', image, image.name);
+  }
 
   const result = await apiPost('/admin/menu/save', formData);
 
@@ -461,7 +489,7 @@ async function saveMenu() {
     closeModal('menu-modal');
     location.reload();
   } else {
-    showToast('❌ Gagal simpan menu: ' + (result?.error || 'tidak diketahui'));
+    showToast('❌ Gagal simpan menu: ' + (result?.error || 'server tidak mengembalikan detail error'));
   }
 }
 

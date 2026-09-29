@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MenuController as AdminMenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
@@ -15,12 +17,27 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::prefix('customer')->name('customer.')->group(function () {
+    Route::middleware('guest:customer')->group(function () {
+        Route::get('/login', [CustomerAuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [CustomerAuthController::class, 'login'])->name('login.submit');
+        Route::post('/register', [CustomerAuthController::class, 'register'])->name('register');
+    });
 
-Route::prefix('order')->name('order.')->group(function () {
-    Route::post('/', [OrderController::class, 'store'])->name('store');
-    Route::post('/upload-proof', [OrderController::class, 'uploadProof'])->name('upload-proof');
-    Route::get('/status', [OrderController::class, 'status'])->name('status');
+    Route::middleware('auth:customer')->group(function () {
+        Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('logout');
+        Route::get('/orders', [CustomerAuthController::class, 'orders'])->name('orders');
+    });
+});
+
+Route::middleware('auth:customer')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+
+    Route::prefix('order')->name('order.')->group(function () {
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+        Route::post('/upload-proof', [OrderController::class, 'uploadProof'])->name('upload-proof');
+        Route::get('/status', [OrderController::class, 'status'])->name('status');
+    });
 });
 
 /*
@@ -58,6 +75,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/orders/list', [AdminOrderController::class, 'list'])->name('orders.list');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/update-status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+
+        // Pelanggan terdaftar
+        Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers');
 
         // Pengaturan
         Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings');

@@ -5,7 +5,7 @@
 @section('content')
 <div class="page active" id="page-report">
   <div class="page-header">
-    <div class="page-title">📈 Laporan Penjualan</div>
+    <div class="page-title">Laporan Penjualan</div>
     <div class="page-sub">Ringkasan pendapatan dan analisis penjualan (7 hari terakhir)</div>
   </div>
 

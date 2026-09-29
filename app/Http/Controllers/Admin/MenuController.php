@@ -32,11 +32,18 @@ class MenuController extends Controller
             'price' => 'required|numeric|min:0',
             'is_available' => 'required|boolean',
             'stock' => 'nullable|integer|min:0',
-            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'image' => ['nullable', 'file', 'image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
         ]);
 
         $menu = ! empty($validated['id']) ? Menu::findOrFail($validated['id']) : new Menu;
         $imagePath = $menu->image_url;
+
+        if ($request->hasFile('image') && ! $request->file('image')->isValid()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Upload gambar gagal. Pastikan file tidak rusak dan ukurannya maksimal 10 MB.',
+            ], 422);
+        }
 
         if ($request->hasFile('image')) {
             $oldStoragePath = $imagePath ? ltrim(str_replace('/storage/', '', parse_url($imagePath, PHP_URL_PATH) ?: $imagePath), '/') : null;
@@ -58,7 +65,11 @@ class MenuController extends Controller
         ]);
         $menu->save();
 
-        return response()->json(['success' => true, 'id' => $menu->id]);
+        return response()->json([
+            'success' => true,
+            'id' => $menu->id,
+            'image_url' => $menu->image_url,
+        ]);
     }
 
     public function destroy(Menu $menu)

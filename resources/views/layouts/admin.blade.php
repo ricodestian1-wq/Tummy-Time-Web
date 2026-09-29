@@ -40,6 +40,9 @@
     <span class="nav-icon">🛒</span> Pesanan
     <span id="pending-badge" style="background:var(--red);color:white;border-radius:999px;font-size:11px;padding:1px 7px;margin-left:auto;display:none">0</span>
   </a>
+  <a href="{{ route('admin.customers') }}" class="nav-item {{ request()->routeIs('admin.customers') ? 'active' : '' }}">
+    <span class="nav-icon">👥</span> Pelanggan
+  </a>
   <a href="{{ route('admin.menu') }}" class="nav-item {{ request()->routeIs('admin.menu') ? 'active' : '' }}">
     <span class="nav-icon">🍗</span> Menu
   </a>
@@ -63,6 +66,7 @@
 <div class="mobile-nav">
   <a href="{{ route('admin.dashboard') }}" class="mob-nav-btn {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><span class="mob-icon">📊</span>Dashboard</a>
   <a href="{{ route('admin.orders') }}" class="mob-nav-btn {{ request()->routeIs('admin.orders') ? 'active' : '' }}"><span class="mob-icon">🛒</span>Pesanan</a>
+  <a href="{{ route('admin.customers') }}" class="mob-nav-btn {{ request()->routeIs('admin.customers') ? 'active' : '' }}"><span class="mob-icon">👥</span>Pelanggan</a>
   <a href="{{ route('admin.menu') }}" class="mob-nav-btn {{ request()->routeIs('admin.menu') ? 'active' : '' }}"><span class="mob-icon">🍗</span>Menu</a>
   <a href="{{ route('admin.report') }}" class="mob-nav-btn {{ request()->routeIs('admin.report') ? 'active' : '' }}"><span class="mob-icon">📈</span>Laporan</a>
   <a href="{{ route('admin.settings') }}" class="mob-nav-btn {{ request()->routeIs('admin.settings') ? 'active' : '' }}"><span class="mob-icon">⚙️</span>Setting</a>
@@ -76,7 +80,7 @@
 <script>
   window.CSRF_TOKEN = "{{ csrf_token() }}";
 </script>
-<script src="{{ asset('js/admin.js') }}"></script>
+<script src="{{ asset('js/admin.js') }}?v={{ filemtime(public_path('js/admin.js')) }}"></script>
 @stack('scripts')
 </body>
 </html>

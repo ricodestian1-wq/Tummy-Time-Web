@@ -104,7 +104,7 @@
       <div class="form-group">
         <label class="form-label">Gambar Menu</label>
         <input class="form-input" id="m-image" type="file" accept="image/jpeg,image/png,image/webp">
-        <div id="m-image-current" style="font-size:0.75rem;color:var(--gray);margin-top:4px">Pilih foto produk (maks. 5 MB). Kosongkan saat edit untuk memakai gambar lama.</div>
+        <div id="m-image-current" style="font-size:0.75rem;color:var(--gray);margin-top:4px">Pilih foto produk (maks. 10 MB). Kosongkan saat edit untuk memakai gambar lama.</div>
       </div>
       <div class="form-row">
         <div class="form-group">

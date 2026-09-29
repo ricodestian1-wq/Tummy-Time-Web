@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.auth' => \App\Http\Middleware\EnsureAdminIsAuthenticated::class,
         ]);
+
+        $middleware->redirectGuestsTo(fn (Request $request) => route('customer.login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

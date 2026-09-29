@@ -6,6 +6,7 @@ use App\Models\Menu;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
@@ -59,6 +60,7 @@ class OrderController extends Controller
 
                 $order = Order::create([
                     'order_code' => Order::generateOrderCode(),
+                    'customer_id' => Auth::guard('customer')->id(),
                     'customer_name' => $validated['customer_name'],
                     'customer_phone' => $validated['customer_phone'] ?? '-',
                     'customer_address' => $validated['customer_address'],

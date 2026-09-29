@@ -40,6 +40,9 @@
     <span class="nav-icon">🛒</span> Pesanan
     <span id="pending-badge" style="background:var(--red);color:white;border-radius:999px;font-size:11px;padding:1px 7px;margin-left:auto;display:none">0</span>
   </a>
+  <a href="<?php echo e(route('admin.customers')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.customers') ? 'active' : ''); ?>">
+    <span class="nav-icon">👥</span> Pelanggan
+  </a>
   <a href="<?php echo e(route('admin.menu')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.menu') ? 'active' : ''); ?>">
     <span class="nav-icon">🍗</span> Menu
   </a>
@@ -63,6 +66,7 @@
 <div class="mobile-nav">
   <a href="<?php echo e(route('admin.dashboard')); ?>" class="mob-nav-btn <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>"><span class="mob-icon">📊</span>Dashboard</a>
   <a href="<?php echo e(route('admin.orders')); ?>" class="mob-nav-btn <?php echo e(request()->routeIs('admin.orders') ? 'active' : ''); ?>"><span class="mob-icon">🛒</span>Pesanan</a>
+  <a href="<?php echo e(route('admin.customers')); ?>" class="mob-nav-btn <?php echo e(request()->routeIs('admin.customers') ? 'active' : ''); ?>"><span class="mob-icon">👥</span>Pelanggan</a>
   <a href="<?php echo e(route('admin.menu')); ?>" class="mob-nav-btn <?php echo e(request()->routeIs('admin.menu') ? 'active' : ''); ?>"><span class="mob-icon">🍗</span>Menu</a>
   <a href="<?php echo e(route('admin.report')); ?>" class="mob-nav-btn <?php echo e(request()->routeIs('admin.report') ? 'active' : ''); ?>"><span class="mob-icon">📈</span>Laporan</a>
   <a href="<?php echo e(route('admin.settings')); ?>" class="mob-nav-btn <?php echo e(request()->routeIs('admin.settings') ? 'active' : ''); ?>"><span class="mob-icon">⚙️</span>Setting</a>
@@ -76,7 +80,7 @@
 <script>
   window.CSRF_TOKEN = "<?php echo e(csrf_token()); ?>";
 </script>
-<script src="<?php echo e(asset('js/admin.js')); ?>"></script>
+<script src="<?php echo e(asset('js/admin.js')); ?>?v=<?php echo e(filemtime(public_path('js/admin.js'))); ?>"></script>
 <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
